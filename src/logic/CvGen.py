@@ -1105,7 +1105,7 @@ def get_skill(skill:Skill):
 
 def get_skills(skills:List[str]):
     if len(skills) > 6:
-        skills = skills[0:6]
+        skills = skills[:6]
     else:
         missing = 6-len(skills)
         

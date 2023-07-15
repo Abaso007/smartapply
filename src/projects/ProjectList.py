@@ -18,14 +18,14 @@ class ProjectList:
     text:str
     def __init__(self, link:str, account:FetcherAccount):
         self.project_list:List[Project] = []
-        self.link:str = link+"details/projects/"
+        self.link: str = f"{link}details/projects/"
         self.account = account
     
     def parse(self):
         self.text = self.account.get_html(self.link)
         self.soup = BeautifulSoup(self.text, "html.parser")
         self.project_elements = self.soup.find_all('li', class_='pvs-list__paged-list-item')
-        if self.project_elements == None:
+        if self.project_elements is None:
             return
         for element in self.project_elements:
             role = self.get_role(element)
@@ -40,55 +40,47 @@ class ProjectList:
     def get_role(self, element:ResultSet) -> str:
         role_div = element.find('div', class_='display-flex flex-wrap align-items-center full-height')
         role = "N/A"
-        if role_div == None:
+        if role_div is None:
             return role
         role_element = role_div.find('span')
-        if role_element == None:
-            return role
-        role = role_element.getText(strip=True)
-        return role
+        return role if role_element is None else role_element.getText(strip=True)
     
     def get_company(self, element:ResultSet) -> str:
         company_span = element.find('span', class_='t-14')
         company = "N/A"
-        if company_span == None:
+        if company_span is None:
             return company
         company_span = company_span.find('span', attrs={'aria-hidden': 'true'})
-        if company_span == None:
-            return company
-        company = company_span.getText(strip=True)
-        return company
+        return company if company_span is None else company_span.getText(strip=True)
 
     def get_date_range(self, element:ResultSet) -> str:
         date_range_element = element.find('span', class_='t-14 t-normal t-black--light')
         date_range = "N/A"
-        if date_range_element == None:
+        if date_range_element is None:
             return date_range
         date_range_element = date_range_element.find('span')
-        if date_range_element == None:
+        if date_range_element is None:
             return date_range
-        date_range = date_range_element.getText(strip=True)
-        return date_range
+        return date_range_element.getText(strip=True)
 
     def get_skills_details(self, element:ResultSet) -> Tuple[str, List[str]]:
         details = ""
         skill = ""
         skills:List[str] = []
         info = element.find('ul', class_='pvs-list')
-        if info == None:
+        if info is None:
             return "N/A", skills
         info = info.find_all('span')
-        if info == None:
+        if info is None:
             return "N/A", skills
         for i in info:
-            found_skills = i.find('span', class_='white-space-pre')      
-            if found_skills:
+            if found_skills := i.find('span', class_='white-space-pre'):
                 skill = i.get_text(strip=True)
             elif i.has_attr('class') and i['class'][0] == 'visually-hidden':
                 text = i.get_text(strip=True)
                 if details != text:
                     details = details + text + "\n"
-        
+
         if skill != "":
             index = skill.find("Skills:")
             if index != -1:

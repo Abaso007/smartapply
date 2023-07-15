@@ -20,7 +20,7 @@ class JobInfo:
         self.text = self.account.get_html(link)
         self.soup = BeautifulSoup(self.text, "html.parser")
         job_div = self.soup.find('div', class_='jobs-search__job-details--container')
-        if job_div == None:
+        if job_div is None:
             return
         job_title_element = job_div.find('h2', class_='t-24 t-bold jobs-unified-top-card__job-title')
         if job_title_element != None:
@@ -35,7 +35,7 @@ class JobInfo:
         if remote_element != None:
             self.remote = remote_element.getText(strip=True)
         job_type_elements = job_div.find_all('li', class_='jobs-unified-top-card__job-insight')
-        
+
         if job_type_elements != None and job_type_elements.__len__() >= 2:
             span_element = job_type_elements[0].find('span')
             if span_element != None:
@@ -43,7 +43,7 @@ class JobInfo:
             span_element = job_type_elements[1].find('span')
             if span_element != None:
                 self.industry = span_element.getText(strip=True)
-        
+
         details_element =  job_div.find('div', class_='jobs-box__html-content jobs-description-content__text t-14 t-normal jobs-description-content__text--stretch', attrs={'id': 'job-details'})
         if details_element != None:
             self.details = details_element.getText(strip=True)

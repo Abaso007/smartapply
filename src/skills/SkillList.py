@@ -18,14 +18,14 @@ class SkillList:
     text:str
     def __init__(self, link:str, account:FetcherAccount):
         self.skill_list:List[Skill] = []
-        self.link:str = link+"details/skills/"
+        self.link: str = f"{link}details/skills/"
         self.account = account
     
     def parse(self):
         self.text = self.account.get_html(self.link)
         self.soup = BeautifulSoup(self.text, "html.parser")
         self.skill_elements = self.soup.find_all('li', class_='pvs-list__paged-list-item')
-        if self.skill_elements == None:
+        if self.skill_elements is None:
             return
         for element in self.skill_elements:
             title = self.get_title(element)
@@ -37,33 +37,29 @@ class SkillList:
     def get_title(self, element:ResultSet) -> str:
         title_div = element.find('div', class_='display-flex flex-wrap align-items-center full-height')
         title = "N/A"
-        if title_div == None:
+        if title_div is None:
             return title
         title_element = title_div.find('span')
-        if title_element == None:
-            return title
-        title = title_element.getText(strip=True)
-        return title
+        return title if title_element is None else title_element.getText(strip=True)
 
     def get_skills_details(self, element:ResultSet) -> Tuple[str, List[str]]:
         details = ""
         skill = ""
         skills:List[str] = []
         info = element.find('ul', class_='pvs-list')
-        if info == None:
+        if info is None:
             return "N/A", skills
         info = info.find_all('span')
-        if info == None:
+        if info is None:
             return "N/A", skills
         for i in info:
-            found_skills = i.find('span', class_='white-space-pre')      
-            if found_skills:
+            if found_skills := i.find('span', class_='white-space-pre'):
                 skill = i.get_text(strip=True)
             elif i.has_attr('class') and i['class'][0] == 'visually-hidden':
                 text = i.get_text(strip=True)
                 if details != text:
                     details = details + text + "\n"
-        
+
         if skill != "":
             index = skill.find("Skills:")
             if index != -1:
