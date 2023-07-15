@@ -20,8 +20,7 @@ os.environ['OPENAI_API_KEY'] = apikey
 def load_chain():
     """Logic for loading the chain you want to use should go here."""
     llm = OpenAI(temperature=0.9)
-    chain = ConversationChain(llm=llm)
-    return chain
+    return ConversationChain(llm=llm)
 
 chain = load_chain()
 
@@ -37,13 +36,10 @@ if "past" not in st.session_state:
 
 
 def get_text():
-    input_text = st.text_input("You: ", "Hello, how are you?", key="input")
-    return input_text
+    return st.text_input("You: ", "Hello, how are you?", key="input")
 
 
-user_input = get_text()
-
-if user_input:
+if user_input := get_text():
     output = chain.run(input=user_input)
 
     st.session_state.past.append(user_input)
@@ -53,4 +49,4 @@ if st.session_state["generated"]:
 
     for i in range(len(st.session_state["generated"]) - 1, -1, -1):
         message(st.session_state["generated"][i], key=str(i))
-        message(st.session_state["past"][i], is_user=True, key=str(i) + "_user")
+        message(st.session_state["past"][i], is_user=True, key=f"{str(i)}_user")

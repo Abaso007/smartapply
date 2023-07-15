@@ -28,20 +28,19 @@ class MainInterface:
             st.write("Please select at least one option")
             checkbox_selected = False
 
+        elif not validators.url(self.input_linkedin):
+            st.write("Please enter a valid Linkedin URL")
+        elif not validators.url(self.input_position):
+            st.write("Please enter a valid job posting URL")
+        elif not validators.url(self.github_linkedin) and self.github_linkedin != "":
+            st.write("Please enter a valid Github URL")
         else:
-            if not validators.url(self.input_linkedin):
-                st.write("Please enter a valid Linkedin URL")
-            elif not validators.url(self.input_position):
-                st.write("Please enter a valid job posting URL")
-            elif not validators.url(self.github_linkedin) and not self.github_linkedin =="":
-                st.write("Please enter a valid Github URL")
-            else:
-                st.write("Recieving information.....") 
-                self.user.parse(self.input_linkedin)
-                self.user.print()
-                self.jobInfo.parse(self.input_position)
-                self.jobInfo.print()  
-                self.user_facing()
+            st.write("Recieving information.....") 
+            self.user.parse(self.input_linkedin)
+            self.user.print()
+            self.jobInfo.parse(self.input_position)
+            self.jobInfo.print()  
+            self.user_facing()
 
     def user_facing(self):
         if self.create_resume:
